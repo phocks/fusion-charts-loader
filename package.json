@@ -1,0 +1,31 @@
+{
+    "name": "fusion-charts-loader",
+    "version": "1.0.0",
+    "description": "A Preact-enabled ABC News story",
+    "license": "MIT",
+    "private": true,
+    "contributors": [
+        "Joshua Byrd <phocks@gmail.com>"
+    ],
+    "aunty": {
+        "deploy": {
+            "contentftp": {
+                "files": "**",
+                "from": "build",
+                "to": "/www/res/sites/news-projects/<name>/<id>"
+            }
+        }
+    },
+    "scripts": {
+        "start": "aunty serve"
+    },
+    "devDependencies": {
+        "@abcnews/aunty": "4.2.x",
+        "prettier": "^1.5.3"
+    },
+    "dependencies": {
+        "fusioncharts": "^3.12.1",
+        "loadjs": "^3.5.1",
+        "shortid": "^2.2.8"
+    }
+}
