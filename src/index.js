@@ -18,8 +18,8 @@ let render = () => {
       const parametersURL = options.externalLink;
 
       let chartType =   getParameterByName('type', parametersURL),
-          chartWidth =  getParameterByName('width', parametersURL) || "100%",
-          chartHeight = getParameterByName('height', parametersURL) || "100%",
+          chartWidth =  getParameterByName('width', parametersURL),
+          chartHeight = getParameterByName('height', parametersURL),
           dataFormat =  getParameterByName('format', parametersURL) || "xmlurl",
           dataSource =  getParameterByName('xml', parametersURL);
 
@@ -31,7 +31,6 @@ let render = () => {
       const rootEl = options.container[0];
 
       let rootWidth = rootEl.offsetWidth;
-
 
       let appEl = document.createElement('div');
 
@@ -47,19 +46,44 @@ let render = () => {
       appEl = document.getElementById(chartName);
       appEl.style.height = rootWidth + "px"; // 1x1 square for now
 
-
-      loadJS([ "/cm/code/8851742/fusioncharts.js", "/cm/code/8851862/fusioncharts.charts.js" ], {
+      // Simultaneous get but sequential load of js files
+      loadJS([ 
+              "/cm/code/8851742/fusioncharts.js", 
+              "/cm/code/8851862/fusioncharts.charts.js" 
+              ], {
         success: () => {
           FusionCharts.ready( () => {
             var fusionChart = new FusionCharts({
               "type":       chartType,
               "renderAt":   chartName,
-              "width":      chartWidth,
-              "height":     chartHeight,
+              "width":      "100%", // Stetches to fit div
+              "height":     "100%",
               "dataFormat": dataFormat,
               "dataSource": dataSource
             });
             fusionChart.render();
+
+            // Destroy and redraw on window resize
+            var doit;
+            function resizedw () {
+              fusionChart.dispose();
+              fusionChart = new FusionCharts({
+                "type":       chartType,
+                "renderAt":   chartName,
+                "width":      "100%", // Stetches to fit div
+                "height":     "100%",
+                "dataFormat": dataFormat,
+                "dataSource": dataSource
+              });
+              fusionChart.render();
+            }
+            window.addEventListener("resize", function() {
+                clearTimeout(doit);
+                doit = setTimeout(function() {
+                    resizedw();
+                }, 300);
+            });
+
           });
         },
         async: false
@@ -70,6 +94,8 @@ let render = () => {
 
 
 render();
+
+
 
 
 
