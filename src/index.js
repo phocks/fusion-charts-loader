@@ -59,7 +59,13 @@ let render = () => {
               "width":      "100%", // Stetches to fit div
               "height":     "100%",
               "dataFormat": dataFormat,
-              "dataSource": dataSource
+              "dataSource": dataSource,
+              "events": {
+                "beforeResize": function (evt, data) {
+                  // Stop auto-resizing, let's do it manually for now
+                  evt.preventDefault();
+                }
+              }
             });
             fusionChart.render();
 
@@ -67,13 +73,22 @@ let render = () => {
             var doit;
             function resizedw () {
               fusionChart.dispose();
+
+              appEl.style.height = rootEl.offsetWidth + "px";
+
               fusionChart = new FusionCharts({
                 "type":       chartType,
                 "renderAt":   chartName,
                 "width":      "100%", // Stetches to fit div
                 "height":     "100%",
                 "dataFormat": dataFormat,
-                "dataSource": dataSource
+                "dataSource": dataSource,
+                "events": {
+                  "beforeResize": function (evt, data) {
+                    // Stop auto-resizing, let's do it manually for now
+                    evt.preventDefault();
+                  }
+                }
               });
               fusionChart.render();
             }
