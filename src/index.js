@@ -21,7 +21,8 @@ let render = () => {
           chartWidth =  getParameterByName('width', parametersURL),
           chartHeight = getParameterByName('height', parametersURL),
           dataFormat =  getParameterByName('format', parametersURL) || "xmlurl",
-          dataSource =  getParameterByName('xml', parametersURL);
+          dataSource =  getParameterByName('xml', parametersURL),
+          aspectRatio = getParameterByName('aspect', parametersURL) || "1x1";
 
 
       // Generate unique ID so we can have multiple charts
@@ -31,6 +32,8 @@ let render = () => {
       const rootEl = options.container[0];
 
       let rootWidth = rootEl.offsetWidth;
+      aspectRatio = aspectRatio.split("x");
+
 
       let appEl = document.createElement('div');
 
@@ -44,7 +47,7 @@ let render = () => {
 
       // Just select the element again so we can modify it
       appEl = document.getElementById(chartName);
-      appEl.style.height = rootWidth + "px"; // 1x1 square for now
+      appEl.style.height = rootWidth * (aspectRatio[1] / aspectRatio[0]) + "px"; // 1x1 square for now
 
       // Simultaneous get but sequential load of js files
       loadJS([ 
@@ -53,6 +56,7 @@ let render = () => {
               ], {
         success: () => {
           FusionCharts.ready( () => {
+
             var fusionChart = new FusionCharts({
               "type":       chartType,
               "renderAt":   chartName,
@@ -61,7 +65,7 @@ let render = () => {
               "dataFormat": dataFormat,
               "dataSource": dataSource,
               "events": {
-                "beforeResize": function (evt, data) {
+                "beforeResize": (evt, data) => {
                   // Stop auto-resizing, let's do it manually for now
                   evt.preventDefault();
                 }
@@ -71,10 +75,10 @@ let render = () => {
 
             // Destroy and redraw on window resize
             var doit;
-            function resizedw () {
+            function resizedWindow () {
               fusionChart.dispose();
 
-              appEl.style.height = rootEl.offsetWidth + "px";
+              appEl.style.height = rootEl.offsetWidth * (aspectRatio[1] / aspectRatio[0]) + "px";
 
               fusionChart = new FusionCharts({
                 "type":       chartType,
@@ -84,7 +88,7 @@ let render = () => {
                 "dataFormat": dataFormat,
                 "dataSource": dataSource,
                 "events": {
-                  "beforeResize": function (evt, data) {
+                  "beforeResize": (evt, data) => {
                     // Stop auto-resizing, let's do it manually for now
                     evt.preventDefault();
                   }
@@ -92,10 +96,10 @@ let render = () => {
               });
               fusionChart.render();
             }
-            window.addEventListener("resize", function() {
+            window.addEventListener("resize", () => {
                 clearTimeout(doit);
-                doit = setTimeout(function() {
-                    resizedw();
+                doit = setTimeout( () => {
+                    resizedWindow();
                 }, 300);
             });
 
