@@ -24,7 +24,7 @@
         "prettier": "^1.5.3"
     },
     "dependencies": {
-        "fusioncharts": "^3.12.1",
+        "fusioncharts": "^3.16.0",
         "loadjs": "^3.5.1",
         "shortid": "^2.2.8"
     }
